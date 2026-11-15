@@ -27,6 +27,19 @@ the simulated mean final price is close to the theoretical `100 · e^{0.05} ≈ 
 (see the legend of the right-hand plot). The distribution of final prices is
 log-normal, as expected.
 
+### European call pricing
+
+Monte Carlo price vs the exact Black-Scholes price (`S0=K=100`, `r=5%`, `σ=20%`, `T=1`):
+
+| Method | Price |
+|---|---|
+| Black-Scholes | 10.4506 |
+| Monte Carlo (200,000 paths) | 10.3993 ± 0.0328 (95% CI: [10.335, 10.464]) |
+
+The standard error shrinks as 1/√N: 100× more paths buys only 10× more precision.
+
+![Monte Carlo convergence](figures/convergence.png)
+
 ## Validation
 
 Tests (`pytest`) check the simulator against closed-form results:
@@ -68,8 +81,8 @@ paths = simulate_gbm(S0=100, mu=0.05, sigma=0.2, T=1, n_steps=252, n_paths=100_0
 ## Roadmap
 
 - [x] GBM path simulator with statistical tests
-- [ ] European call/put pricing with standard error and 95% confidence interval, validated against Black-Scholes
-- [ ] Convergence study (error vs number of paths, 1/√N)
+- [x] European call/put pricing with standard error and 95% confidence interval, validated against Black-Scholes
+- [x] Convergence study (error vs number of paths, 1/√N)
 - [ ] Variance reduction: antithetic variates, control variates
 - [ ] Path-dependent options (Asian, barrier)
 - [ ] Greeks with common random numbers
