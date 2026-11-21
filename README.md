@@ -40,6 +40,22 @@ The standard error shrinks as 1/√N: 100× more paths buys only 10× more preci
 
 ![Monte Carlo convergence](figures/convergence.png)
 
+### Variance reduction
+
+Same number of paths (10,000), 2,000 independent runs per method:
+
+| Method | Spread of the estimate | Variance reduction |
+|---|---|---|
+| Plain Monte Carlo | ±0.151 | ×1 |
+| Antithetic variates | ±0.106 | ×2 |
+| Control variate (discounted stock price, E = S0) | ±0.057 | ×7 |
+
+The control variate gives the precision of plain Monte Carlo with ~7× more paths.
+The optimal coefficient β = Cov(Y, X) / Var(X) is the slope of a regression of the
+payoff on the stock price, close to the option's delta.
+
+![Variance reduction](figures/variance_reduction.png)
+
 ## Validation
 
 Tests (`pytest`) check the simulator against closed-form results:
@@ -61,7 +77,7 @@ figures/              output plots
 ## Quickstart
 
 ```bash
-git clone https://github.com/<your-username>/monte-carlo-sim.git
+git clone https://github.com/<andreaaa-jama >/monte-carlo-sim.git
 cd monte-carlo-sim
 python3 -m venv .venv
 source .venv/bin/activate
@@ -83,6 +99,6 @@ paths = simulate_gbm(S0=100, mu=0.05, sigma=0.2, T=1, n_steps=252, n_paths=100_0
 - [x] GBM path simulator with statistical tests
 - [x] European call/put pricing with standard error and 95% confidence interval, validated against Black-Scholes
 - [x] Convergence study (error vs number of paths, 1/√N)
-- [ ] Variance reduction: antithetic variates, control variates
+- [x] Variance reduction: antithetic variates, control variates
 - [ ] Path-dependent options (Asian, barrier)
 - [ ] Greeks with common random numbers
