@@ -93,6 +93,25 @@ predicts the discretely monitored price, and matches the simulation at every ste
 
 ![Barrier option](figures/barrier.png)
 
+### Greeks with common random numbers
+
+Delta and vega are estimated by central finite differences, `(C(θ+h) − C(θ−h)) / 2h`.
+If the two prices use independent random draws, their noise does not cancel and is
+divided by `2h`: the error explodes as `h` shrinks. Reusing the same draws for both
+prices (common random numbers) makes the noise cancel path by path.
+
+| Delta (200,000 paths, h = 0.5) | Estimate | Std. error |
+|---|---|---|
+| Black-Scholes | 0.6368 | exact |
+| Independent draws | 0.653 | 0.046 |
+| Common random numbers | 0.6360 | 0.0013 |
+| Pathwise derivative (no bump) | 0.6359 | 0.0013 |
+
+Common random numbers cut the variance by ~1,300×. Large bumps add a finite-difference
+bias; the pathwise estimator has neither the bump nor the bias.
+
+![Greeks](figures/greeks.png)
+
 ## Validation
 
 Tests (`pytest`) check the simulator against closed-form results:
