@@ -56,6 +56,24 @@ payoff on the stock price, close to the option's delta.
 
 ![Variance reduction](figures/variance_reduction.png)
 
+### Arithmetic Asian call (no closed form)
+
+Payoff on the average of 52 weekly prices: `max(mean(S_1..S_52) − K, 0)`.
+There is no closed form for the arithmetic average, but the geometric average is
+log-normal and has an exact price, so it is used as a control variate.
+
+| | Price | Std. error (100,000 paths) |
+|---|---|---|
+| European call (Black-Scholes) | 10.4506 | exact |
+| Geometric Asian call (closed form) | 5.6374 | exact |
+| Arithmetic Asian, plain MC | 5.869 | 0.0256 |
+| Arithmetic Asian, geometric control variate | 5.8543 | 0.0007 |
+
+Variance reduction ≈ ×1,300: the same precision as plain Monte Carlo with over
+1,000× more paths. Validation: the geometric formula is checked against simulation
+and reduces to Black-Scholes with one fixing; both estimators agree; and
+geometric < arithmetic < European, as theory requires.
+
 ## Validation
 
 Tests (`pytest`) check the simulator against closed-form results:
@@ -77,7 +95,7 @@ figures/              output plots
 ## Quickstart
 
 ```bash
-git clone https://github.com/<andreaaa-jama >/monte-carlo-sim.git
+git clone https://github.com/<andreaaa-jama>/monte-carlo-sim.git
 cd monte-carlo-sim
 python3 -m venv .venv
 source .venv/bin/activate
