@@ -74,6 +74,25 @@ Variance reduction ≈ ×1,300: the same precision as plain Monte Carlo with ove
 and reduces to Black-Scholes with one fixing; both estimators agree; and
 geometric < arithmetic < European, as theory requires.
 
+### Down-and-out barrier call
+
+A call (`K = 100`) that is cancelled if the price ever touches `H = 90`.
+The closed form assumes the barrier is watched continuously; a simulation only checks it
+at discrete dates, so it misses crossings between dates and **overprices** the option.
+This discretisation bias does not shrink with more paths, only with more time steps.
+
+The Broadie-Glasserman-Kou correction (shift the barrier to `H·exp(−0.5826 σ √Δt)`)
+predicts the discretely monitored price, and matches the simulation at every step count.
+
+| Monitoring dates | Monte Carlo (± 95% CI) | Continuous formula + BGK |
+|---|---|---|
+| 12 | 9.580 ± 0.065 | 9.580 |
+| 52 | 9.154 ± 0.065 | 9.174 |
+| 252 | 8.902 ± 0.064 | 8.914 |
+| continuous | n/a | 8.665 (exact) |
+
+![Barrier option](figures/barrier.png)
+
 ## Validation
 
 Tests (`pytest`) check the simulator against closed-form results:
@@ -118,5 +137,5 @@ paths = simulate_gbm(S0=100, mu=0.05, sigma=0.2, T=1, n_steps=252, n_paths=100_0
 - [x] European call/put pricing with standard error and 95% confidence interval, validated against Black-Scholes
 - [x] Convergence study (error vs number of paths, 1/√N)
 - [x] Variance reduction: antithetic variates, control variates
-- [ ] Path-dependent options (Asian, barrier)
-- [ ] Greeks with common random numbers
+- [x] Path-dependent options (Asian, barrier)
+- [x] Greeks with common random numbers
